@@ -1,45 +1,37 @@
-import { useEffect, useState } from "react"
+// import { useEffect, useState } from "react"
+// import { getRandomFacts } from "./logic/facts"
+
+import { useCatFact } from "./hooks/useCatFact"
+import { useCatImage } from "./hooks/useCatImage"
+
 function App() {
-  const CATS_FACTS = "https://catfact.ninja/fact"
-  const CATS_URL = 'https://cataas.com'
-  const [fact, setFact] = useState()
-  const [imgUrl, setImgUrl] = useState()
+  // const CATS_URL = "https://cataas.com"
+  const { fact, refreshFact } = useCatFact()
+  const { imgUrl } = useCatImage({ fact })
 
-  // get the cat facts
-  useEffect(() =>{
-    fetch(CATS_FACTS)
-      .then(res => res.json())
-      .then(data => setFact(data.fact))
-      
-  },[])
+  const handleClick = async () => {
+    refreshFact()
+  }
 
-
-  //get the cat images
-  useEffect(() =>{
-    if(!fact) return
-   
-    const firstThreeWords = fact.split(' ', 5).join(' ')
-    fetch(`https://cataas.com/cat/says/${firstThreeWords}?size&color=red&json=true`)
-      .then(res => res.json())
-      .then(response => { 
-        const { url } = response 
-        setImgUrl(`${CATS_URL}${url}`)
-      })
-  },[fact])
-
-
-
-  return(
+  return (
     <>
       <main>
         <h1 className="title">Cats Facts</h1>
-        {imgUrl && <img className="catImg" src={imgUrl} alt={`An Image take from this side ${imgUrl}`} />}
+        <div className="imageArea">
+          {imgUrl && (
+            <img
+              className="catImg"
+              src={imgUrl}
+              alt={`An Image take from this side ${imgUrl}`}
+            />
+          )}
+        </div>
 
         <h2 className="fact">{fact}</h2>
+        <button className="newCat" onClick={handleClick}>New fact</button>
       </main>
     </>
   )
-
 }
 
 export default App
